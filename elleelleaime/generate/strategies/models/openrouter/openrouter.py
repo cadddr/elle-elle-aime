@@ -58,12 +58,14 @@ class OpenRouterModels(PatchGenerationStrategy):
         for prompt in chunk:
             result_sample = []
             for _ in range(self.n_samples):
-                completion = self._completions_with_backoff(
-                    model=self.model_name,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=self.temperature,
-                    provider=self.provider_args,
-                )
+                kwargs = {
+                    "model": self.model_name,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": self.temperature,
+                    "provider": self.provider_args,
+                }
+                kwargs = {k: v for k, v in kwargs.items() if v}
+                completion = self._completions_with_backoff(**kwargs)
                 result_sample.append(completion)
             result.append(result_sample)
 
