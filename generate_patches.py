@@ -24,8 +24,13 @@ def generate_candidate(chunk: List[dict], strategy_name: str, **kwargs) -> List[
         sample
         for sample in chunk
         if sample["prompt"]
-        and not ("generation" in sample and sample["generation"] is not None)
+        and not (
+            "generation" in sample
+            and sample["generation"] is not None
+            and not (any("error" in generation for generation in sample["generation"]))
+        )
     ]
+    logging.info(f"Gerating patches for {len(chunk_to_generate)} samples...")
     non_empty_prompt_chunk = [sample["prompt"] for sample in chunk_to_generate]
     generations = generation_strategy.generate(non_empty_prompt_chunk)
 
