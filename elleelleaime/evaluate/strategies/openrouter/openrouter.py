@@ -24,6 +24,8 @@ class OpenRouterEvaluationStrategy(InstructEvaluationStrategy):
         for choice in generation["choices"]:
             message = choice["message"]["content"]
             candidate_patch = self.extract_patch_from_message(message)
+            if candidate_patch is None:
+                evaluation.append(None)
             evaluation.append(self.evaluate_generation(bug, sample, candidate_patch))
 
         return evaluation
