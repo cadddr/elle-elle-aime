@@ -1,13 +1,21 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
-name = "elleelleaime"
+name = "repairbench-framework"
 version = "0.0.1"
 description = "Automatic Program Repair with Large Language Models"
 license = "MIT"
 authors = [
     "André Silva <andreans@kth.se>"
 ]
-repository = "https://github.com/ASSERT-KTH/elle-elle-aime"
-homepage = "https://github.com/ASSERT-KTH/elle-elle-aime"
+readme = "README.md"
+repository = "https://github.com/ASSERT-KTH/repairbench-framework"
+homepage = "https://github.com/ASSERT-KTH/repairbench-framework"
+packages = [
+    { include = "elleelleaime" }
+]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
