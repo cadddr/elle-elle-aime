@@ -52,6 +52,10 @@ class OpenRouterCostStrategy(CostStrategy):
             "prompt": 0.55,
             "completion": 2.19,
         },
+        "deepseek-r1-distill-llama-70b": {
+            "prompt": 0.23,
+            "completion": 0.69,
+        },
     }
 
     @staticmethod
