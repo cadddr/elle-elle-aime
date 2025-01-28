@@ -18,7 +18,6 @@ class OpenRouterModels(PatchGenerationStrategy):
         self.include_reasoning = kwargs.get("include_reasoning", True)
         self.provider = kwargs.get("provider", None)
         self.provider_args = {
-            "require_parameters": True,
             "allow_fallbacks": False,
         }
         if self.provider:
