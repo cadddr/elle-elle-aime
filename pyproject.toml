@@ -16,6 +16,7 @@ homepage = "https://github.com/ASSERT-KTH/repairbench-framework"
 packages = [
     { include = "elleelleaime" }
 ]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
