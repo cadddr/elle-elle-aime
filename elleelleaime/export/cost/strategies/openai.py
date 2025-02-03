@@ -19,6 +19,10 @@ class OpenAICostStrategy(CostStrategy):
             "prompt": 15,
             "completion": 60,
         },
+        "o3-mini-2025-01-31": {
+            "prompt": 1.1,
+            "completion": 4.4,
+        },
     }
 
     @staticmethod
