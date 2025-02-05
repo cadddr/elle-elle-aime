@@ -56,6 +56,10 @@ class OpenRouterCostStrategy(CostStrategy):
             "prompt": 0.23,
             "completion": 0.69,
         },
+        "deepseek-r1-distill-qwen-32b": {
+            "prompt": 0.12,
+            "completion": 0.18,
+        },
     }
 
     @staticmethod
