@@ -15,6 +15,10 @@ class GoogleCostStrategy(CostStrategy):
             "prompt": 1.25,
             "completion": 5.00,
         },
+        "gemini-2.0-flash-001": {
+            "prompt": 0.1,
+            "completion": 0.4,
+        },
     }
 
     __COST_PER_MILLION_TOKENS_OVER_128K = {
@@ -51,7 +55,11 @@ class GoogleCostStrategy(CostStrategy):
                     candidates_token_count = generation["usage_metadata"][
                         "candidates_token_count"
                     ]
-                    if prompt_token_count > 128000:
+                    if (
+                        prompt_token_count > 128000
+                        and model_name
+                        in GoogleCostStrategy.__COST_PER_MILLION_TOKENS_OVER_128K
+                    ):
                         prompt_cost = (
                             GoogleCostStrategy.__COST_PER_MILLION_TOKENS_OVER_128K[
                                 model_name
