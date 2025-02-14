@@ -23,6 +23,10 @@ class OpenAITokenStrategy(TokenStrategy):
             "prompt": 1.1,
             "completion": 4.4,
         },
+        "o3-mini-2025-01-31-high": {
+            "prompt": 1.1,
+            "completion": 4.4,
+        },
     }
 
     @staticmethod

@@ -8,7 +8,7 @@ import logging
 class OpenRouterTokenStrategy(TokenStrategy):
 
     __COST_PER_MILLION_TOKENS = {
-        "meta-llama:llama-3.1-405b-instruct": {
+        "llama-3.1-405b-instruct": {
             "prompt": 2.8,
             "completion": 2.8,
         },
