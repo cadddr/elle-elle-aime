@@ -13,7 +13,7 @@ PROVIDER_RATES = {
     "openrouter": {
         "prompt": 2.8,
         "completion": 2.8,
-        "model": "meta-llama:llama-3.1-405b-instruct",
+        "model": "llama-3.1-405b-instruct",
     },
     "anthropic": {
         "prompt": 0.25,
