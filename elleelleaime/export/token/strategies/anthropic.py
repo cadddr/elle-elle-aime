@@ -20,6 +20,10 @@ class AnthropicTokenStrategy(TokenStrategy):
             "prompt": 0.25,
             "completion": 1.25,
         },
+        "claude-3-7-sonnet-20250219": {
+            "prompt": 3,
+            "completion": 15,
+        },
     }
 
     @staticmethod
