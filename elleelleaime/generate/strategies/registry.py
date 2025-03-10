@@ -20,6 +20,9 @@ from elleelleaime.generate.strategies.models.anthropic.anthropic import (
 from elleelleaime.generate.strategies.models.mistral.mistral import (
     MistralModels,
 )
+from elleelleaime.generate.strategies.models.huggingface.deepseek.deepseek_fim import (
+    DeepSeekFIM,
+)
 
 from typing import Tuple
 
@@ -39,6 +42,7 @@ class PatchGenerationStrategyRegistry:
         "codellama-instruct": (CodeLLaMAIntruct, ("model_name",)),
         "anthropic": (AnthropicModels, ("model_name", "max_tokens")),
         "mistral": (MistralModels, ("model_name",)),
+        "deepseek-fim": (DeepSeekFIM, ("model_name",)),
     }
 
     @classmethod

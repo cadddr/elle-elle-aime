@@ -17,7 +17,7 @@ cd ../..;
 ### GitBug-Java
 cd benchmarks/gitbug-java;
 chmod +x gitbug-java;
-poetry install --no-root;
+poetry install;
 # Skip setup if in CI
 if [ -z "$CI" ]; then
  poetry run ./gitbug-java setup;

@@ -1,14 +1,14 @@
 from typing import Optional
-from .cost_strategy import CostStrategy
+from .cost_strategy import TokenStrategy
 
 import tqdm
 import logging
 
 
-class OpenRouterCostStrategy(CostStrategy):
+class OpenRouterTokenStrategy(TokenStrategy):
 
     __COST_PER_MILLION_TOKENS = {
-        "meta-llama:llama-3.1-405b-instruct": {
+        "llama-3.1-405b-instruct": {
             "prompt": 2.8,
             "completion": 2.8,
         },
@@ -48,25 +48,41 @@ class OpenRouterCostStrategy(CostStrategy):
             "prompt": 0.14,
             "completion": 0.28,
         },
+        "deepseek-r1": {
+            "prompt": 0.55,
+            "completion": 2.19,
+        },
+        "deepseek-r1-distill-llama-70b": {
+            "prompt": 0.23,
+            "completion": 0.69,
+        },
+        "deepseek-r1-distill-qwen-32b": {
+            "prompt": 0.12,
+            "completion": 0.18,
+        },
     }
 
     @staticmethod
-    def compute_costs(samples: list, model_name: str) -> Optional[dict]:
-        if model_name not in OpenRouterCostStrategy.__COST_PER_MILLION_TOKENS:
+    def compute_usage(samples: list, model_name: str) -> Optional[dict]:
+        if model_name not in OpenRouterTokenStrategy.__COST_PER_MILLION_TOKENS:
             return None
 
-        costs = {
+        usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
             "prompt_cost": 0.0,
             "completion_cost": 0.0,
             "total_cost": 0.0,
         }
 
-        for sample in tqdm.tqdm(samples, f"Computing costs for {model_name}..."):
+        for sample in tqdm.tqdm(samples, f"Computing token usage for {model_name}..."):
             if sample["generation"]:
                 if not isinstance(sample["generation"], list):
                     generation = [sample["generation"]]
                 else:
                     generation = sample["generation"]
+
                 for g in generation:
                     if not g:
                         logging.warning(f"generation is empty")
@@ -74,20 +90,27 @@ class OpenRouterCostStrategy(CostStrategy):
                     elif "usage" not in g:
                         logging.warning(f"'usage' key not found in {g}")
                         continue
-                    prompt_token_count = g["usage"]["prompt_tokens"]
-                    candidates_token_count = g["usage"]["completion_tokens"]
 
-                    prompt_cost = OpenRouterCostStrategy.__COST_PER_MILLION_TOKENS[
+                    prompt_token_count = g["usage"]["prompt_tokens"]
+                    completion_token_count = g["usage"]["completion_tokens"]
+
+                    # Update token counts
+                    usage["prompt_tokens"] += prompt_token_count
+                    usage["completion_tokens"] += completion_token_count
+
+                    # Calculate costs
+                    prompt_cost = OpenRouterTokenStrategy.__COST_PER_MILLION_TOKENS[
                         model_name
                     ]["prompt"]
-                    completion_cost = OpenRouterCostStrategy.__COST_PER_MILLION_TOKENS[
+                    completion_cost = OpenRouterTokenStrategy.__COST_PER_MILLION_TOKENS[
                         model_name
                     ]["completion"]
 
-                    costs["prompt_cost"] += prompt_cost * prompt_token_count / 1000000
-                    costs["completion_cost"] += (
-                        completion_cost * candidates_token_count / 1000000
+                    usage["prompt_cost"] += prompt_cost * prompt_token_count / 1000000
+                    usage["completion_cost"] += (
+                        completion_cost * completion_token_count / 1000000
                     )
 
-        costs["total_cost"] = costs["prompt_cost"] + costs["completion_cost"]
-        return costs
+        usage["total_tokens"] = usage["prompt_tokens"] + usage["completion_tokens"]
+        usage["total_cost"] = usage["prompt_cost"] + usage["completion_cost"]
+        return usage

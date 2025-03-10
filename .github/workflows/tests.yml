@@ -5,24 +5,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
 
-      - uses: jlumbroso/free-disk-space@main
+      - uses: jlumbroso/free-disk-space@v1.3.1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5.4.0
         with:
           python-version: '3.13'
 
       - name: Install poetry
         run: |
-          python -m pip install poetry==1.5
+          python -m pip install poetry==2.0.1
 
       - name: Configure poetry
         run: |
           python -m poetry config virtualenvs.in-project true
     
       - name: Cache the virtualenv
-        uses: actions/cache@v4
+        uses: actions/cache@v4.2.2
         with:
           path: ./.venv
           key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
@@ -32,10 +32,12 @@ jobs:
           python -m poetry install
 
       - name: Setup Perl
-        uses: shogo82148/actions-setup-perl@v1
+        uses: shogo82148/actions-setup-perl@v1.33.0
+        with:
+          perl-version: "5.40.1"
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v4.7.0
         with:
           distribution: 'temurin'
           java-version: '8'
@@ -45,7 +47,17 @@ jobs:
       
       - name: Install Ubuntu packages
         run: |
-          sudo apt-get install -y dos2unix
+          sudo apt-get install -y dos2unix \
+                              git \
+                              build-essential \
+                              subversion \
+                              perl \
+                              curl \
+                              unzip \
+                              cpanminus \
+                              make \
+                              gosu \
+                              locales
 
       - name: Build and run tests
         run: CI=true && python -m poetry run python -m pytest -sxv tests/

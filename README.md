@@ -35,9 +35,10 @@ Note: By default, GitBug-Java will be installed. This benchmark is heavy (requir
 
 ## Execution
 
-Be sure to be in the correct environment:
+Be sure to be in the correct environment and to install the dependencies:
 ```bash
 poetry shell
+poetry install --no-root
 ```
 
 Example of how to generate samples for Defects4J using the instruct strategy:
