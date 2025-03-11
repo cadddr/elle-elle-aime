@@ -2,6 +2,7 @@ from pathlib import Path
 from unidiff import PatchSet
 from elleelleaime.core.benchmarks.benchmark import Benchmark
 from elleelleaime.core.benchmarks.runbugrun.runbugrunbug import RunBugRunBug
+from elleelleaime.core.benchmarks.runbugrun.output_matcher import match as match_output
 
 import os
 import json
@@ -97,7 +98,7 @@ class RunBugRun(Benchmark):
             diff[0].source_file = f"{buggy_file.relative_to(self.path)}"
 
             test_rows = test_df[test_df.problem_id == prob_id][["input", "output"]]
-            failing_tests = self.get_failing_tests(buggy_file, errors, test_rows)
+            failing_tests = self.get_failing_tests(buggy_file, errors, test_rows, prob_id)
             if failing_tests:
                 self.add_bug(
                     RunBugRunBug(
@@ -108,7 +109,7 @@ class RunBugRun(Benchmark):
                     )
                 )
 
-    def get_failing_tests(self, buggy_file, errors, test_rows):
+    def get_failing_tests(self, buggy_file, errors, test_rows, prob_id):
         failing_tests = {}
         test_results = []
 
@@ -139,6 +140,7 @@ class RunBugRun(Benchmark):
                         )
                     )
                     futures_to_tests[futures[-1]] = (
+                        test_id,
                         test_input.strip(),
                         test_output.strip(),
                     )
@@ -148,11 +150,11 @@ class RunBugRun(Benchmark):
             if not already_cached:
                 for future in concurrent.futures.as_completed(futures):
                     returncode, result = future.result()
-                    test_input, test_output = futures_to_tests[future]
+                    test_id, test_input, test_output = futures_to_tests[future]
                     if returncode:
                         cause = f"""Function with input:\n{test_input}\nexpected to output:\n{test_output}\nfailed with error:\n{result.strip()}"""
                         failing_tests[f"""test_{test_id}"""] = cause
-                    elif result != test_output:
+                    elif not match_output(test_output, result, prob_id):
                         cause = f"""Function with input:\n{test_input}\nexpected to output:\n{test_output}\nbut got:\n{result}"""
                         failing_tests[f"""test_{test_id}"""] = cause
                     else:

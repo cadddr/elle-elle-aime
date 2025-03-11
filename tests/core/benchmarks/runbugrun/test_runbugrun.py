@@ -98,7 +98,7 @@ class TestRunBugRun:
         assert runbugrun is not None
         runbugrun.initialize()
 
-        # We only run 3 bugs to not take too long
+        # We only run 20 bugs to not take too long
         bugs = runbugrun.get_bugs()[:20]
         assert bugs is not None
 
@@ -115,7 +115,7 @@ class TestRunBugRun:
                 pbar.set_postfix(
                     {
                         "bug": futures_to_bugs[future].identifier,
-                        "tests": len(bug.failing_tests),
+                        "tests": len(futures_to_bugs[future].failing_tests),
                     }
                 )
                 pbar.update()

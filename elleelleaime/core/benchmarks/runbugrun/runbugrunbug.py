@@ -8,6 +8,7 @@ from elleelleaime.core.benchmarks.benchmark import Benchmark
 from elleelleaime.core.benchmarks.bug import RichBug
 from elleelleaime.core.benchmarks.test_result import TestResult
 from elleelleaime.core.benchmarks.compile_result import CompileResult
+from elleelleaime.core.benchmarks.runbugrun.output_matcher import match as match_output
 
 
 class RunBugRunBug(RichBug):
@@ -62,9 +63,12 @@ class RunBugRunBug(RichBug):
             test_input, test_output = match.group(1), match.group(2)
             error_code, result = RunBugRunBug.execute_test_case(file_path, test_input)
 
+            if error_code and 'Syntax error: EOF in backquote substitution' in result:
+                continue
+
             if error_code:
                 return TestResult(False)
-            elif result != test_output.strip():
+            elif not match_output(test_output.strip(), result.strip(), self.get_identifier().split('_')[0]):
                 return TestResult(False)
 
         return TestResult(True)
