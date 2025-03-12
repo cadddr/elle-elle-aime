@@ -52,12 +52,12 @@ def extract_single_function(bug: Bug) -> Optional[Tuple[str, str]]:
         # Checkout the buggy and fixed versions of the bug
         buggy_checkout_path = (
             _
-            if (_ := bug.checkout(str(buggy_path), fixed=False))
+            if isinstance(_ := bug.checkout(buggy_path, fixed=False), str)
             else Path(buggy_path, f"{bug.get_identifier()}.py")
         )
         fixed_checkout_path = (
             _
-            if (_ := bug.checkout(str(fixed_path), fixed=True))
+            if isinstance(_ := bug.checkout(fixed_path, fixed=True), str)
             else Path(fixed_path, f"{bug.get_identifier()}.py")
         )
 
