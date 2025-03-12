@@ -31,10 +31,12 @@ class RunBugRunBug(RichBug):
         # Copy source file
 
         subfolder = "fixed" if fixed else "buggy"
-        cmd = f"cd {self.benchmark.get_path()}; mkdir {path}/buggy; cp {subfolder}/{self.identifier}.py {path}/buggy"  # FIXME
+        cmd = f"cd {self.benchmark.get_path()}; mkdir {path}/buggy; cp {subfolder}/{self.identifier}.py {path}/buggy"
         run = subprocess.run(cmd, shell=True, capture_output=True, check=True)
 
-        return run.returncode == 0
+        return (
+            f"{path}/buggy/{self.get_identifier()}.py" if run.returncode == 0 else False
+        )
 
     def compile(self, path: str) -> CompileResult:
         file_path = Path(path, "buggy", f"{self.get_identifier()}.py")
@@ -63,12 +65,17 @@ class RunBugRunBug(RichBug):
             test_input, test_output = match.group(1), match.group(2)
             error_code, result = RunBugRunBug.execute_test_case(file_path, test_input)
 
-            if error_code and 'Syntax error: EOF in backquote substitution' in result:
+            if error_code and (
+                "Syntax error: EOF in backquote substitution" in result
+                or "Argument list too long:" in result
+            ):  # these are shell related, skip
                 continue
 
             if error_code:
                 return TestResult(False)
-            elif not match_output(test_output.strip(), result.strip(), self.get_identifier().split('_')[0]):
+            elif not match_output(
+                test_output.strip(), result.strip(), self.get_identifier().split("_")[0]
+            ):
                 return TestResult(False)
 
         return TestResult(True)
@@ -85,7 +92,7 @@ class RunBugRunBug(RichBug):
                 shell=True,
                 capture_output=True,
                 check=False,
-                timeout=1,
+                timeout=1,  # about 90 solutions time out, increase when regenerating buggy_test_results (2 solutions still hang waiting on empty input)
             )
         except OSError:
             return 255, "OSError: [Errno 7] Argument list too long: '/bin/sh'"

@@ -50,13 +50,21 @@ def extract_single_function(bug: Bug) -> Optional[Tuple[str, str]]:
 
     try:
         # Checkout the buggy and fixed versions of the bug
-        bug.checkout(str(buggy_path), fixed=False)
-        bug.checkout(str(fixed_path), fixed=True)
-        # FIXME
-        with open(Path(buggy_path, "buggy", f"{bug.get_identifier()}.py")) as f:
+        buggy_checkout_path = (
+            _
+            if (_ := bug.checkout(str(buggy_path), fixed=False))
+            else Path(buggy_path, f"{bug.get_identifier()}.py")
+        )
+        fixed_checkout_path = (
+            _
+            if (_ := bug.checkout(str(fixed_path), fixed=True))
+            else Path(fixed_path, f"{bug.get_identifier()}.py")
+        )
+
+        with open(buggy_checkout_path) as f:
             buggy_code = f.read()
-        # FIXME
-        with open(Path(fixed_path, "buggy", f"{bug.get_identifier()}.py")) as f:
+
+        with open(fixed_checkout_path) as f:
             fixed_code = f.read()
 
         buggy_functions = extract_functions(buggy_code)

@@ -98,7 +98,9 @@ class RunBugRun(Benchmark):
             diff[0].source_file = f"{buggy_file.relative_to(self.path)}"
 
             test_rows = test_df[test_df.problem_id == prob_id][["input", "output"]]
-            failing_tests = self.get_failing_tests(buggy_file, errors, test_rows, prob_id)
+            failing_tests = self.get_failing_tests(
+                buggy_file, errors, test_rows, prob_id
+            )
             if failing_tests:
                 self.add_bug(
                     RunBugRunBug(
@@ -133,7 +135,6 @@ class RunBugRun(Benchmark):
                 elif (
                     not already_cached
                 ):  # if there isn't a runtime exception, need to execute to get the cause of test failure
-                    # TODO: checkout first?
                     futures.append(
                         executor.submit(
                             RunBugRunBug.execute_test_case, buggy_file, test_input

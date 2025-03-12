@@ -38,7 +38,6 @@ class TestRunBugRun:
             assert len(list(Path(fixed_path).glob("**/*"))) > 0
 
             # Assert that we can reach the py file
-            # TODO: this doesn't check correspondence to diff path
             return (
                 Path(buggy_path, "buggy", f"{bug.get_identifier()}.py").exists()
                 and Path(fixed_path, "buggy", f"{bug.get_identifier()}.py").exists()
