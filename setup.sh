@@ -22,6 +22,7 @@ poetry install;
 if [ -z "$CI" ]; then
  poetry run ./gitbug-java setup;
 fi
+cd ../..;
 
 ### RunBugRun
 cd benchmarks/run_bug_run;
